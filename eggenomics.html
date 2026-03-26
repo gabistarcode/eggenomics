@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EGGENOMICS 🐣</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Space+Mono:wght@400;700&display=swap');
+
+  :root {
+    --gold: #F4C542;
+    --lindt-red: #C0392B;
+    --green: #5DBE6E;
+    --blue: #4A90D9;
+    --pink: #F48FB1;
+    --foil: #A8E063;
+    --marsh: #FF9A3C;
+    --bg: #FFF8EC;
+    --dark: #2C1A0E;
+    --card-bg: #FFFDF6;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    font-family: 'Space Mono', monospace;
+    color: var(--dark);
+    min-height: 100vh;
+    padding: 20px;
+    background-image:
+      radial-gradient(circle at 10% 20%, rgba(244,197,66,0.15) 0%, transparent 40%),
+      radial-gradient(circle at 90% 80%, rgba(244,143,177,0.15) 0%, transparent 40%),
+      radial-gradient(circle at 50% 50%, rgba(93,190,110,0.08) 0%, transparent 60%);
+  }
+
+  header {
+    text-align: center;
+    padding: 30px 0 10px;
+    position: relative;
+  }
+
+  .title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.5rem, 8vw, 5rem);
+    font-weight: 900;
+    letter-spacing: -2px;
+    background: linear-gradient(135deg, var(--gold) 0%, var(--lindt-red) 50%, var(--marsh) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+  }
+
+  .subtitle {
+    font-size: 0.7rem;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: #9B7B4F;
+    margin-top: 6px;
+  }
+
+  .egg-rain {
+    font-size: 1.2rem;
+    letter-spacing: 2px;
+    margin-top: 8px;
+    animation: float 3s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+  }
+
+  /* SETUP PANEL */
+  .setup-panel {
+    background: var(--card-bg);
+    border: 2px solid var(--gold);
+    border-radius: 16px;
+    padding: 20px;
+    max-width: 700px;
+    margin: 20px auto;
+    box-shadow: 4px 4px 0 rgba(244,197,66,0.3);
+  }
+
+  .panel-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 14px;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .player-setup {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+
+  input[type="text"] {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.85rem;
+    padding: 10px 14px;
+    border: 2px solid #E8D5B0;
+    border-radius: 8px;
+    background: white;
+    color: var(--dark);
+    outline: none;
+    transition: border-color 0.2s;
+    flex: 1;
+    min-width: 140px;
+  }
+
+  input[type="text"]:focus { border-color: var(--gold); }
+
+  input[type="number"] {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.85rem;
+    padding: 10px 14px;
+    border: 2px solid #E8D5B0;
+    border-radius: 8px;
+    background: white;
+    color: var(--dark);
+    outline: none;
+    width: 80px;
+    transition: border-color 0.2s;
+  }
+
+  input[type="number"]:focus { border-color: var(--gold); }
+
+  button {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 10px 18px;
+    border: 2px solid var(--dark);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .btn-add {
+    background: var(--gold);
+    color: var(--dark);
+  }
+
+  .btn-add:hover { transform: translate(-2px, -2px); box-shadow: 3px 3px 0 var(--dark); }
+
+  .btn-start {
+    background: var(--lindt-red);
+    color: white;
+    border-color: var(--lindt-red);
+    font-size: 0.9rem;
+    padding: 12px 28px;
+    display: block;
+    margin: 10px auto 0;
+  }
+
+  .btn-start:hover { transform: translate(-2px, -2px); box-shadow: 3px 3px 0 var(--dark); }
+
+  .btn-reset {
+    background: #f0f0f0;
+    color: var(--dark);
+    font-size: 0.7rem;
+  }
+  .btn-reset:hover { background: #e0e0e0; }
+
+  .player-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  .chip {
+    background: white;
+    border: 2px solid var(--dark);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 700;
+  }
+
+  .chip-remove {
+    cursor: pointer;
+    opacity: 0.5;
+    font-size: 1rem;
+    line-height: 1;
+    border: none;
+    background: none;
+    padding: 0;
+    color: var(--dark);
+    min-width: unset;
+  }
+
+  .chip-remove:hover { opacity: 1; transform: none; box-shadow: none; }
+
+  .pink-config {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.8rem;
+    margin-top: 8px;
+    flex-wrap: wrap;
+  }
+
+  /* SCORING KEY */
+  .scoring-key {
+    background: var(--card-bg);
+    border: 2px solid #E8D5B0;
+    border-radius: 16px;
+    padding: 16px 20px;
+    max-width: 700px;
+    margin: 0 auto 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 10px;
+  }
+
+  .egg-type {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.72rem;
+    font-weight: 700;
+  }
+
+  .egg-dot {
+    width: 28px;
+    height: 28px;
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    flex-shrink: 0;
+    border: 2px solid rgba(0,0,0,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.6rem;
+  }
+
+  .pts { color: #9B7B4F; font-weight: 400; display: block; }
+
+  /* SCOREBOARD */
+  .scoreboard {
+    max-width: 900px;
+    margin: 0 auto;
+    display: none;
+  }
+
+  .scoreboard.active { display: block; }
+
+  .players-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .player-card {
+    background: var(--card-bg);
+    border: 2.5px solid var(--dark);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative;
+  }
+
+  .player-card:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 5px 5px 0 var(--dark);
+  }
+
+  .player-card.leading {
+    border-color: var(--gold);
+    box-shadow: 4px 4px 0 var(--gold);
+  }
+
+  .player-header {
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #F0E8D0;
+  }
+
+  .player-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+  }
+
+  .player-score {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: var(--lindt-red);
+    line-height: 1;
+  }
+
+  .score-label { font-size: 0.55rem; color: #9B7B4F; text-transform: uppercase; letter-spacing: 1px; text-align: right; }
+
+  .egg-counters {
+    padding: 12px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .counter-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .counter-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    flex: 1;
+  }
+
+  .counter-controls {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    border: 2px solid var(--dark);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .counter-btn {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    font-weight: 700;
+    border: none;
+    border-radius: 0;
+    cursor: pointer;
+    padding: 0;
+    min-width: unset;
+    transition: background 0.1s;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  .counter-btn.minus { background: #FFF0E8; color: var(--lindt-red); }
+  .counter-btn.minus:hover { background: #FFD6C8; transform: none; box-shadow: none; }
+  .counter-btn.plus { background: #E8F5EA; color: #2E7D32; }
+  .counter-btn.plus:hover { background: #C8E6C9; transform: none; box-shadow: none; }
+
+  .counter-val {
+    width: 36px;
+    text-align: center;
+    font-size: 0.9rem;
+    font-weight: 700;
+    background: white;
+    padding: 6px 0;
+    border-left: 1.5px solid #E0D0B0;
+    border-right: 1.5px solid #E0D0B0;
+    line-height: 1;
+  }
+
+  /* LEADERBOARD */
+  .leaderboard {
+    background: var(--card-bg);
+    border: 2px solid var(--dark);
+    border-radius: 16px;
+    padding: 16px 20px;
+    max-width: 700px;
+    margin: 0 auto 20px;
+  }
+
+  .lb-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 1px dashed #E8D5B0;
+    font-size: 0.82rem;
+    font-weight: 700;
+    transition: background 0.2s;
+  }
+
+  .lb-row:last-child { border-bottom: none; }
+  .lb-rank { width: 28px; font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 900; color: #C0A060; }
+  .lb-name { flex: 1; }
+  .lb-score { font-family: 'Playfair Display', serif; font-size: 1.3rem; color: var(--lindt-red); }
+  .lb-breakdown { font-size: 0.65rem; color: #9B7B4F; font-weight: 400; }
+
+  .crown { font-size: 1.2rem; }
+
+  /* WINNER BANNER */
+  .winner-banner {
+    display: none;
+    text-align: center;
+    padding: 20px;
+    background: linear-gradient(135deg, var(--gold), var(--marsh));
+    border-radius: 16px;
+    border: 3px solid var(--dark);
+    max-width: 700px;
+    margin: 0 auto 20px;
+    animation: pop 0.4s ease;
+  }
+
+  .winner-banner.show { display: block; }
+
+  @keyframes pop {
+    0% { transform: scale(0.8); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  .winner-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 900;
+    color: white;
+    text-shadow: 2px 2px 0 rgba(0,0,0,0.2);
+  }
+
+  .winner-sub { font-size: 0.8rem; color: rgba(255,255,255,0.85); margin-top: 4px; letter-spacing: 2px; text-transform: uppercase; }
+
+  /* CONTROLS BAR */
+  .controls-bar {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+
+  .btn-finalize {
+    background: var(--green);
+    color: white;
+    border-color: var(--green);
+  }
+  .btn-finalize:hover { transform: translate(-2px,-2px); box-shadow: 3px 3px 0 var(--dark); }
+
+  /* EGG INVENTORY */
+  .inventory-bar {
+    background: white;
+    border: 2px dashed #E8D5B0;
+    border-radius: 12px;
+    padding: 10px 16px;
+    max-width: 700px;
+    margin: 0 auto 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    font-size: 0.72rem;
+  }
+
+  .inv-label { font-weight: 700; color: #9B7B4F; letter-spacing: 1px; text-transform: uppercase; margin-right: 4px; }
+  .inv-item { display: flex; align-items: center; gap: 4px; }
+  .inv-count { font-weight: 700; }
+  .inv-total { font-weight: 700; }
+  .inv-sep { color: #D0C0A0; }
+
+  /* hiding setup when game started */
+  .setup-panel.hidden { display: none; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="title">EGGENOMICS</div>
+  <div class="subtitle">Office Easter Egg Hunt · Point Tally System</div>
+  <div class="egg-rain">🥚 🐣 🐰 🥚 🐣 🐰 🥚</div>
+</header>
+
+<!-- SCORING KEY -->
+<div class="scoring-key">
+  <div style="grid-column: 1/-1; font-size:0.65rem; text-transform:uppercase; letter-spacing:2px; color:#9B7B4F; font-weight:700; margin-bottom:4px;">Scoring Key</div>
+  <div class="egg-type">
+    <div class="egg-dot" style="background: #F4C542;">👑</div>
+    <div>Lindt Bunny<span class="pts">50 pts</span></div>
+  </div>
+  <div class="egg-type">
+    <div class="egg-dot" style="background: var(--green);"></div>
+    <div>Green Bunny<span class="pts">30 pts</span></div>
+  </div>
+  <div class="egg-type">
+    <div class="egg-dot" style="background: var(--blue);"></div>
+    <div>Blue Bunny<span class="pts">20 pts</span></div>
+  </div>
+  <div class="egg-type">
+    <div class="egg-dot" style="background: var(--foil);"></div>
+    <div>Foil Egg<span class="pts">5 pts</span></div>
+  </div>
+  <div class="egg-type">
+    <div class="egg-dot" style="background: var(--marsh);"></div>
+    <div>Marshmallow Egg<span class="pts">2 pts</span></div>
+  </div>
+  <div class="egg-type">
+    <div class="egg-dot" style="background: var(--pink);"></div>
+    <div>Pink Egg<span class="pts">3 pts</span></div>
+  </div>
+</div>
+
+<!-- SETUP PANEL -->
+<div class="setup-panel" id="setupPanel">
+  <div class="panel-title">🐰 Add Players</div>
+  <div class="player-setup">
+    <input type="text" id="playerName" placeholder="Player name..." onkeydown="if(event.key==='Enter') addPlayer()">
+    <button class="btn-add" onclick="addPlayer()">+ Add</button>
+  </div>
+  <div class="player-chips" id="playerChips"></div>
+
+  <div class="pink-config" style="margin-top:14px;">
+    <span style="font-weight:700;">🌸 Pink eggs in play:</span>
+    <input type="number" id="pinkCount" value="0" min="0" max="200" style="width:70px;">
+    <span style="font-size:0.7rem; color:#9B7B4F;">(count before hiding)</span>
+  </div>
+
+  <button class="btn-start" onclick="startGame()">🚀 Start Hunt</button>
+</div>
+
+<!-- GAME AREA (hidden until started) -->
+<div class="scoreboard" id="scoreboard">
+
+  <div class="controls-bar">
+    <button class="btn-finalize" onclick="declareWinner()">🏆 Declare Winner</button>
+    <button class="btn-reset" onclick="resetGame()">↺ Reset Game</button>
+  </div>
+
+  <div class="inventory-bar" id="inventoryBar"></div>
+
+  <div class="winner-banner" id="winnerBanner">
+    <div class="winner-text" id="winnerText"></div>
+    <div class="winner-sub" id="winnerSub"></div>
+  </div>
+
+  <div style="max-width:700px;margin:0 auto 16px;">
+    <div class="panel-title" style="font-size:0.85rem; margin-left:4px;">📊 Leaderboard</div>
+    <div class="leaderboard" id="leaderboard"></div>
+  </div>
+
+  <div class="panel-title" style="max-width:900px;margin:0 auto 10px 0; font-size:0.85rem;">🃏 Player Cards</div>
+  <div class="players-grid" id="playersGrid"></div>
+</div>
+
+<script>
+const EGG_TYPES = [
+  { key: 'lindt',   label: 'Lindt Bunny',      pts: 50, color: '#F4C542', emoji: '👑', max: 1 },
+  { key: 'green',   label: 'Green Bunny',       pts: 30, color: '#5DBE6E', emoji: '🟢', max: 2 },
+  { key: 'blue',    label: 'Blue Bunny',        pts: 20, color: '#4A90D9', emoji: '🔵', max: 3 },
+  { key: 'foil',    label: 'Foil Egg',          pts: 5,  color: '#A8E063', emoji: '💚', max: 18 },
+  { key: 'marsh',   label: 'Marshmallow Egg',   pts: 2,  color: '#FF9A3C', emoji: '🟠', max: 24 },
+  { key: 'pink',    label: 'Pink Egg',          pts: 3,  color: '#F48FB1', emoji: '🌸', max: 0 },
+];
+
+let players = [];
+let scores = {};
+let gameStarted = false;
+
+function addPlayer() {
+  const input = document.getElementById('playerName');
+  const name = input.value.trim();
+  if (!name || players.includes(name)) { input.focus(); return; }
+  players.push(name);
+  scores[name] = { lindt:0, green:0, blue:0, foil:0, marsh:0, pink:0 };
+  input.value = '';
+  renderChips();
+  input.focus();
+}
+
+function removePlayer(name) {
+  players = players.filter(p => p !== name);
+  delete scores[name];
+  renderChips();
+}
+
+function renderChips() {
+  const container = document.getElementById('playerChips');
+  container.innerHTML = players.map(p => `
+    <div class="chip">${p}
+      <button class="chip-remove" onclick="removePlayer('${p}')">×</button>
+    </div>`).join('');
+}
+
+function startGame() {
+  if (players.length < 1) { alert('Add at least one player!'); return; }
+  const pinkMax = parseInt(document.getElementById('pinkCount').value) || 0;
+  EGG_TYPES.find(e => e.key === 'pink').max = pinkMax;
+  gameStarted = true;
+  document.getElementById('setupPanel').classList.add('hidden');
+  document.getElementById('scoreboard').classList.add('active');
+  renderAll();
+}
+
+function calcScore(name) {
+  return EGG_TYPES.reduce((sum, e) => sum + (scores[name][e.key] || 0) * e.pts, 0);
+}
+
+function getLeader() {
+  return [...players].sort((a,b) => calcScore(b) - calcScore(a))[0];
+}
+
+function renderAll() {
+  renderInventoryBar();
+  renderPlayersGrid();
+  renderLeaderboard();
+}
+
+function renderInventoryBar() {
+  const bar = document.getElementById('inventoryBar');
+  const parts = EGG_TYPES
+    .filter(e => e.max > 0)
+    .map(e => {
+      const claimed = players.reduce((s,p) => s + (scores[p][e.key]||0), 0);
+      const rem = e.max - claimed;
+      return `<span class="inv-item"><span style="display:inline-block;width:10px;height:10px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;background:${e.color};margin-right:3px;border:1px solid rgba(0,0,0,0.15)"></span><span class="inv-count">${rem}/${e.max}</span> <span style="color:#9B7B4F;">${e.label.split(' ')[0]}</span></span>`;
+    });
+  bar.innerHTML = `<span class="inv-label">Available</span>` + parts.join('<span class="inv-sep"> · </span>');
+}
+
+function renderPlayersGrid() {
+  const grid = document.getElementById('playersGrid');
+  const leader = getLeader();
+  const sorted = [...players].sort((a,b) => calcScore(b) - calcScore(a));
+  grid.innerHTML = sorted.map(name => {
+    const s = calcScore(name);
+    const isLeader = name === leader && s > 0;
+    return `<div class="player-card ${isLeader ? 'leading' : ''}" id="card-${name.replace(/\s/g,'_')}">
+      <div class="player-header">
+        <div>
+          <div class="player-name">${isLeader ? '👑 ' : ''}${name}</div>
+        </div>
+        <div style="text-align:right">
+          <div class="player-score">${s}</div>
+          <div class="score-label">points</div>
+        </div>
+      </div>
+      <div class="egg-counters">
+        ${EGG_TYPES.filter(e => e.max > 0 || e.key==='pink').map(e => {
+          const claimed = players.reduce((sum,p) => sum + (scores[p][e.key]||0), 0);
+          const rem = e.max - claimed + (scores[name][e.key]||0);
+          const atMax = (scores[name][e.key]||0) >= rem && rem === (scores[name][e.key]||0);
+          return `<div class="counter-row">
+            <div class="counter-label">
+              <div style="width:14px;height:16px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;background:${e.color};border:1.5px solid rgba(0,0,0,0.15);flex-shrink:0"></div>
+              ${e.label}
+              <span style="color:#9B7B4F;font-weight:400">(${e.pts}pt)</span>
+            </div>
+            <div class="counter-controls">
+              <button class="counter-btn minus" onclick="adjust('${name}','${e.key}',-1)">−</button>
+              <div class="counter-val">${scores[name][e.key]||0}</div>
+              <button class="counter-btn plus" onclick="adjust('${name}','${e.key}',1)">+</button>
+            </div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderLeaderboard() {
+  const lb = document.getElementById('leaderboard');
+  const sorted = [...players].sort((a,b) => calcScore(b) - calcScore(a));
+  const medals = ['🥇','🥈','🥉'];
+  lb.innerHTML = sorted.map((name,i) => {
+    const s = calcScore(name);
+    const breakdown = EGG_TYPES
+      .filter(e => (scores[name][e.key]||0) > 0)
+      .map(e => `${scores[name][e.key]}×${e.label.split(' ')[0]}`)
+      .join(', ');
+    return `<div class="lb-row">
+      <div class="lb-rank">${medals[i] || (i+1)}</div>
+      <div class="lb-name">${name}<div class="lb-breakdown">${breakdown || '—'}</div></div>
+      <div class="lb-score">${s}</div>
+    </div>`;
+  }).join('');
+}
+
+function adjust(name, key, delta) {
+  const current = scores[name][key] || 0;
+  const eType = EGG_TYPES.find(e => e.key === key);
+  const totalClaimed = players.reduce((s,p) => s + (scores[p][key]||0), 0);
+  const remaining = eType.max - totalClaimed;
+  if (delta > 0 && remaining <= 0) return; // none left
+  if (delta < 0 && current <= 0) return;
+  scores[name][key] = current + delta;
+  renderAll();
+}
+
+function declareWinner() {
+  const leader = getLeader();
+  const score = calcScore(leader);
+  const banner = document.getElementById('winnerBanner');
+  const winnerText = document.getElementById('winnerText');
+  const winnerSub = document.getElementById('winnerSub');
+  winnerText.textContent = `🏆 ${leader} Wins!`;
+  winnerSub.textContent = `${score} points · Chief Egg Officer`;
+  banner.classList.add('show');
+  banner.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function resetGame() {
+  if (!confirm('Reset the entire game?')) return;
+  players = [];
+  scores = {};
+  gameStarted = false;
+  document.getElementById('setupPanel').classList.remove('hidden');
+  document.getElementById('scoreboard').classList.remove('active');
+  document.getElementById('winnerBanner').classList.remove('show');
+  document.getElementById('playerChips').innerHTML = '';
+  document.getElementById('pinkCount').value = 0;
+  EGG_TYPES.find(e => e.key === 'pink').max = 0;
+}
+</script>
+</body>
+</html>
